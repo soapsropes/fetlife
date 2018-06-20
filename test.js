@@ -4,17 +4,11 @@ const FetLife = require('./index');
 const { username, password } = require('./credentials');
 
 const doIt = async () => {
+	console.log('Creating new FetLife client');
 	const fetlife = new FetLife();
 
 	console.log('Logging in');
 	await fetlife.login(username, password);
-
-	// console.log('token:');
-	// console.log(fetlife.getAccessToken());
-
-	// console.log('Getting me');
-	// const me = await fetlife.getMe();
-	// console.log(JSON.stringify(me, null, 2));
 
 	console.log('Getting friend requests');
 	const friendRequests = await fetlife.getFriendRequests();
@@ -30,6 +24,17 @@ const doIt = async () => {
 				console.error(`Failed to accept friend request ${friendRequest.id}: ${error}`);
 			});
 	}));
+
+	console.log('Getting token');
+	const token = fetlife.getAccessToken();
+	console.log(`Token: ${JSON.stringify(token, null, 2)}`);
+
+	console.log('Creating new FetLife client from token');
+	const fetlife2 = new FetLife({ accessToken: token });
+
+	console.log('Getting me');
+	const me = await fetlife2.getMe();
+	console.log(JSON.stringify(me, null, 2));
 };
 
 doIt().catch((error) => {
