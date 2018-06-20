@@ -75,13 +75,23 @@ class FetLife {
 		}
 
 		const res = await this.wreck.request(method || 'GET', resource);
-		const body = await Wreck.read(res);
-
-		return JSON.parse(body.toString());
+		return Wreck.read(res, { json: 'strict' });
 	}
 
 	async getMe() {
 		return this.apiRequest('me');
+	}
+
+	async getFriendRequests() {
+		return this.apiRequest('me/friendrequests');
+	}
+
+	async getFriendRequestsSent() {
+		return this.apiRequest('me/friendrequests?filter=sent');
+	}
+
+	async acceptFriendRequest(friendRequestId) {
+		return this.apiRequest(`me/friendrequests/${friendRequestId}`, 'PUT');
 	}
 }
 
