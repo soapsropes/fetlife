@@ -26,7 +26,7 @@ const doIt = async () => {
 	}));
 
 	console.log('Getting token');
-	const token = fetlife.getAccessToken();
+	const token = await fetlife.getAccessToken();
 	console.log(`Token: ${JSON.stringify(token, null, 2)}`);
 
 	console.log('Creating new FetLife client from token');

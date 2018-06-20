@@ -32,24 +32,7 @@ const oauthConfig = {
 const oauthClient = oauth2.create(oauthConfig);
 
 class FetLife {
-	constructor(options) {
-		this.accessToken = null;
-
-		this.wreck = Wreck.defaults({
-			baseUrl: `${baseUri}/api/v2`,
-			headers,
-		});
-
-		if (_.has(options, 'accessToken')) {
-			this.setAccessToken(options.accessToken);
-		}
-
-		this.onTokenRefresh = _.get(options, 'onTokenRefresh', null);
-	}
-
-	setAccessToken(tokenData) {
-		this.accessToken = oauthClient.accessToken.create(tokenData);
-
+	updateWreckHeaders() {
 		const authHeaders = _.assign(
 			{},
 			headers,
@@ -59,7 +42,33 @@ class FetLife {
 		this.wreck = this.wreck.defaults({ headers: authHeaders });
 	}
 
-	getAccessToken() {
+	setAccessToken(tokenData) {
+		this.accessToken = oauthClient.accessToken.create(tokenData);
+		this.updateWreckHeaders();
+	}
+
+	async assertAccessToken() {
+		if (!this.accessToken) {
+			throw new Error('No access token available - login or provide token');
+		}
+
+		const { token } = this.accessToken;
+
+		const expiresAt = token.expires_at;
+		const now = new Date();
+
+		if (now.getTime() + 300000 > expiresAt.getTime()) {
+			// token has expired or will expire within the next 5 minutes
+			this.accessToken = await this.accessToken.refresh();
+			this.updateWreckHeaders();
+			if (this.onTokenRefresh) {
+				await this.onTokenRefresh(this.accessToken.token);
+			}
+		}
+	}
+
+	async getAccessToken() {
+		await this.assertAccessToken();
 		return this.accessToken.token;
 	}
 
@@ -70,10 +79,7 @@ class FetLife {
 	}
 
 	async apiRequest(resource, method) {
-		if (!this.accessToken) {
-			throw new Error('No access token available');
-		}
-
+		await this.assertAccessToken();
 		const res = await this.wreck.request(method || 'GET', resource);
 		return Wreck.read(res, { json: 'strict' });
 	}
@@ -92,6 +98,21 @@ class FetLife {
 
 	async acceptFriendRequest(friendRequestId) {
 		return this.apiRequest(`me/friendrequests/${friendRequestId}`, 'PUT');
+	}
+
+	constructor(options) {
+		this.accessToken = null;
+
+		this.wreck = Wreck.defaults({
+			baseUrl: `${baseUri}/api/v2`,
+			headers,
+		});
+
+		if (_.has(options, 'accessToken')) {
+			this.setAccessToken(options.accessToken);
+		}
+
+		this.onTokenRefresh = _.get(options, 'onTokenRefresh', null);
 	}
 }
 
