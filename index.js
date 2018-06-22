@@ -54,15 +54,15 @@ class FetLife {
 
 		const { token } = this.accessToken;
 
-		const expiresAt = token.expires_at;
-		const now = new Date();
+		const expiresAt = token.expires_at.getTime();
+		const now = new Date().getTime();
 
-		if (now.getTime() + 300000 > expiresAt.getTime()) {
+		if (Number.isNaN(expiresAt) || (now + 300000 > expiresAt)) {
 			// token has expired or will expire within the next 5 minutes
 			this.accessToken = await this.accessToken.refresh();
 			this.updateWreckHeaders();
 			if (this.onTokenRefresh) {
-				await this.onTokenRefresh(this.accessToken.token);
+				await this.onTokenRefresh(_.cloneDeep(this.accessToken.token));
 			}
 		}
 	}
