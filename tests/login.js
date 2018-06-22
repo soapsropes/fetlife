@@ -41,4 +41,3 @@ doIt().catch((error) => {
 	console.error(`Failed: ${error}`);
 	console.error(error.stack);
 });
-
