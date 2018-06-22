@@ -36,7 +36,7 @@ class FetLife {
 		const authHeaders = _.assign(
 			{},
 			headers,
-			{ Authorization: `Bearer ${this.accessToken.token.access_token}` }
+			{ Authorization: `Bearer ${this.accessToken.token.access_token}` },
 		);
 
 		this.wreck = this.wreck.defaults({ headers: authHeaders });
@@ -80,8 +80,11 @@ class FetLife {
 
 	async apiRequest(resource, method) {
 		await this.assertAccessToken();
-		const res = await this.wreck.request(method || 'GET', resource);
-		return Wreck.read(res, { json: 'strict' });
+		const { payload } = await this.wreck[method || 'get'](
+			resource,
+			{ json: 'strict' },
+		);
+		return payload;
 	}
 
 	async getMe() {
@@ -97,7 +100,7 @@ class FetLife {
 	}
 
 	async acceptFriendRequest(friendRequestId) {
-		return this.apiRequest(`me/friendrequests/${friendRequestId}`, 'PUT');
+		return this.apiRequest(`me/friendrequests/${friendRequestId}`, 'put');
 	}
 
 	constructor(options) {
@@ -117,4 +120,3 @@ class FetLife {
 }
 
 module.exports = FetLife;
-
