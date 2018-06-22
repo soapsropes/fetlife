@@ -1,0 +1,16 @@
+{
+	"env": {
+		"es6": true,
+		"node": true
+	},
+	"extends": "airbnb-base",
+	"rules": {
+		"no-param-reassign": 0,
+		"no-tabs": 0,
+		"indent": ["error", "tab"],
+		"no-console": 0
+	},
+	"parserOptions": {
+		"sourceType": "script"
+	}
+}
