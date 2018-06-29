@@ -24,9 +24,6 @@ const oauthConfig = {
 	http: {
 		headers,
 	},
-	options: {
-		authorizationMethod: 'body',
-	},
 };
 
 const oauthClient = oauth2.create(oauthConfig);

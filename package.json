@@ -23,7 +23,7 @@
   "homepage": "https://github.com/soapsropes/fetlife#readme",
   "dependencies": {
     "lodash": "^4.17.10",
-    "simple-oauth2": "^2.2.0",
+    "simple-oauth2": "^1.6.0",
     "wreck": "^14.0.2"
   },
   "devDependencies": {
