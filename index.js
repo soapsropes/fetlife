@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const oauth2 = require('simple-oauth2');
-const Wreck = require('wreck');
+const Axios = require('axios');
 
 const clientId = 'd8f8ebd522bf5123c3f29db3c8faf09029a032b44f0d1739d4325cd3ccf11570';
 const clientSecret = '47273306a9a3a3448a908748eff13a21a477cc46f6a3968b5c7d05611c4f2f26';
@@ -22,26 +22,26 @@ const oauthConfig = {
 		tokenPath: 'api/oauth/token',
 	},
 	http: {
-		headers,
+		headers: _.clone(headers),
 	},
 };
 
 const oauthClient = oauth2.create(oauthConfig);
 
 class FetLife {
-	updateWreckHeaders() {
+	updateAxiosHeaders() {
 		const authHeaders = _.assign(
 			{},
 			headers,
 			{ Authorization: `Bearer ${this.accessToken.token.access_token}` },
 		);
 
-		this.wreck = this.wreck.defaults({ headers: authHeaders });
+		this.axios.defaults.headers.common = authHeaders;
 	}
 
 	setAccessToken(tokenData) {
 		this.accessToken = oauthClient.accessToken.create(tokenData);
-		this.updateWreckHeaders();
+		this.updateAxiosHeaders();
 	}
 
 	async assertAccessToken() {
@@ -57,7 +57,7 @@ class FetLife {
 		if (Number.isNaN(expiresAt) || (now + 300000 > expiresAt)) {
 			// token has expired or will expire within the next 5 minutes
 			this.accessToken = await this.accessToken.refresh();
-			this.updateWreckHeaders();
+			this.updateAxiosHeaders();
 			if (this.onTokenRefresh) {
 				await this.onTokenRefresh(_.cloneDeep(this.accessToken.token));
 			}
@@ -77,11 +77,8 @@ class FetLife {
 
 	async apiRequest(resource, method) {
 		await this.assertAccessToken();
-		const { payload } = await this.wreck[method || 'get'](
-			resource,
-			{ json: 'strict' },
-		);
-		return payload;
+		const response = await this.axios[method || 'get'](resource);
+		return response.data;
 	}
 
 	async getMe() {
@@ -103,9 +100,9 @@ class FetLife {
 	constructor(options) {
 		this.accessToken = null;
 
-		this.wreck = Wreck.defaults({
-			baseUrl: `${baseUri}/api/v2`,
-			headers,
+		this.axios = Axios.create({
+			headers: _.clone(headers),
+			baseURL: `${baseUri}/api/v2`,
 		});
 
 		if (_.has(options, 'accessToken')) {

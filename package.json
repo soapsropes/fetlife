@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/soapsropes/fetlife#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "lodash": "^4.17.10",
-    "simple-oauth2": "^1.6.0",
-    "wreck": "^14.0.2"
+    "simple-oauth2": "^1.6.0"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
