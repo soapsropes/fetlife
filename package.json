@@ -2,8 +2,9 @@
   "name": "fetlife",
   "version": "0.4.0",
   "description": "FetLife API client",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "prepublish": "babel lib --out-dir dist --presets=@babel/env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,11 +23,15 @@
   },
   "homepage": "https://github.com/soapsropes/fetlife#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
     "axios": "^0.18.0",
     "lodash": "^4.17.10",
     "simple-oauth2": "^1.6.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.51",
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.12.0"
