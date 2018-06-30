@@ -1,6 +1,6 @@
 'use strict';
 
-const FetLife = require('../index');
+const FetLife = require('../dist/index');
 const { username, password } = require('./credentials');
 
 const doIt = async () => {

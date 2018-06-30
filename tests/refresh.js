@@ -1,6 +1,6 @@
 'use strict';
 
-const FetLife = require('../index');
+const FetLife = require('../dist/index');
 const token = require('./token');
 
 const onTokenRefresh = (newToken) => {
