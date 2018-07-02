@@ -1,5 +1,4 @@
 node_modules/
-credentials.json
-token.json
+tests/*.json
 .npmrc
 dist/
