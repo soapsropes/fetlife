@@ -26,8 +26,8 @@
     "@babel/polyfill": "^7.0.0-beta.51",
     "axios": "^0.18.0",
     "bottleneck": "^1.16.0",
-    "lodash": "^4.17.10",
-    "simple-oauth2-browser": "^1.6.0"
+    "lodash": "^4.17.11",
+    "simple-oauth2-browser": "^1.6.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",
